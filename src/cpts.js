@@ -1,5 +1,6 @@
 import React, {Component} from "react";
 import "./title.css"
+import "./demo.scss"
 import assert from "assert";
 
 
@@ -70,6 +71,64 @@ export class HeaderComponent extends Component {
     }
 }
 
+class TableComponent extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {};
+        this.PREFIX = props.PREFIX || "table"
+        this.content = props.content || ""
+        this.state = {
+            error: null,
+            isLoaded: false,
+            items: []
+        }
+    }
+
+    componentDidMount() {
+        fetch("http://192.168.77.120:8888/books", {method: 'GET',
+            headers: {'Content-Type': 'application/json'}})
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log(result, 'result')
+                    this.setState({
+                        isLoaded: true,
+                        items: result['res'],
+                    })
+                },
+                (error) => {
+                    this.setState({
+                        isLoaded: true,
+                        error
+                    });
+                }
+            )
+    }
+
+    render() {
+        const { error, isLoaded, items } = this.state;
+        if (error) {
+            return <div>ERROR MES</div>
+        } else if (!isLoaded) {
+            return <div>Loading...</div>
+        } else {
+            console.log(items)
+            return (
+                items.map(item => (
+                <tr>
+                    <span>
+                        item
+                    </span>
+                </tr>
+            )))
+        }
+        return (
+           <table className={this.PREFIX}>
+               {this.content}
+           </table>
+       );
+    }
+}
 
 export class CSSTableItemComponent extends Component {
     /**
@@ -137,15 +196,32 @@ export class SectionComponent extends Component {
     render() {
         return <section className={this.PREFIX}>
             <CSSTableComponent tableArray={
-                [<CSSTableLeftSideComponent/>, <CSSTableMainComponent/>, <CSSTableRightSideComponent/>]
+                [
+                    <CSSTableLeftSideComponent/>,
+                    <CSSTableMainComponent content={
+                        <TableComponent/>
+                    }/>,
+                    <CSSTableRightSideComponent/>]
             } />
         </section>
     }
 }
 
+export class FooterComponent extends Component {
+    constructor(props) {
+        super(props);
+        this.PREFIX = props.PREFIX||"footer"
+        this.content = props.content||"footer"
+    }
 
-
-
+    render() {
+        return (
+            <footer className={this.PREFIX}>
+                {this.content}
+            </footer>
+        );
+    }
+}
 
 
 

@@ -1,1 +1,23 @@
-#
+
+
+.section {
+    background-color: #fde0e1;
+    padding: 0 0 0 0;
+    height: 100px;
+    width: 100%;
+    display: table;
+
+    .css-table {
+        display: table-row;
+
+        .css-table-item-left {
+            width: 25%;
+        }
+        .css-table-item-main {
+            width: 50%;
+        }
+        .css-table-item-right {
+            width: 25%;
+        }
+    }
+}

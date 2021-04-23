@@ -3,14 +3,15 @@ import './App.css';
 
 import React from "react";
 // import * as assert from "assert";
-import {HeaderComponent, SectionComponent} from "./cpts";
+import {HeaderComponent, SectionComponent, FooterComponent} from "./cpts";
 
 
 function App() {
   return (
       <div className="App">
-          <HeaderComponent />
+          <HeaderComponent/>
           <SectionComponent/>
+          <FooterComponent/>
       </div>
   )
 }
