@@ -1,90 +1,158 @@
 import React, {Component} from "react";
+import ReactDOM from 'react-dom';
+import cookie from "react-cookies";
 import "./title.css"
 import "./demo.scss"
-import assert from "assert";
+import {TableComponent} from "./asset";
+import {TitleTableComponent} from "./title";
+import * as PropTypes from "prop-types";
 
 
-// 组件数组
-class _APP {
-    constructor() {
-        this.app_item_ls = [];
-    }
-    toString(){
-        let _str = "";
-        this.app_item_ls.forEach(v=>{_str+=v});
-        return _str;
-    }
-    new_app_item(name){
-        const item = {
-            PREFIX: name,
-            CLASS: `${name}-cls`,
-        };
-        this.app_item_ls.push(item);
-        return item;
-    }
-    add_cls_name(item, cls_name){
-        assert(this.app_item_ls.includes(item), 'not a app item');
-        item.CLASS += ` ${cls_name}`;
-    }
-}
-
-
-const _app = new _APP();
+let MyContext = React.createContext('asset')
 
 
 export class LinkComponent extends Component {
     constructor(props) {
         super(props);
-        this.PREFIX = '_link'
+        this.prefix = 'link'
         this.content = props.content
         this.href = props.href
     }
 
-    static defaultProps = {
-        text_decoration: false
-    }
-
     render() {
-        return <a href={this.href? this.href: "#"} className={this.PREFIX}>{this.content}</a>
+        return (
+            <div className={this.prefix}>
+                <span className={this.prefix+"-a"}>{this.content}</span>
+            </div>
+        )
     }
 }
 
-export class HeaderComponent extends Component {
+class ForumLinkComponent extends LinkComponent {
     constructor(props) {
-        // ES6规定必须调用 super
         super(props);
-        this._header = _app.new_app_item('header');
-    }
-
-    static defaultProps = {};
-
-    render() {
-        return <header className={this._header.CLASS}>
-            <div className={this._header.CLASS + "_left"}>
-                <p>
-                    <LinkComponent content="&lt;&lt;&lt;"/>
-                </p>
-            </div>
-            <div className={this._header.CLASS + "_right"}>
-            </div>
-        </header>
+        this.content = 'Forum'
+        this.href = '/titles'
     }
 }
 
-class TableComponent extends React.Component {
+class AssetLinkComponent extends LinkComponent {
     constructor(props) {
         super(props);
-        this.state = {};
-        this.PREFIX = props.PREFIX || "table"
-        this.content = props.content || ""
+        this.content = 'Asset'
+        this.href = '/assets'
+    }
+}
+
+class ToolLinkComponent extends LinkComponent {
+    constructor(props) {
+        super(props);
+        this.content = 'Tool'
+        this.href = '/tools'
+    }
+}
+
+class NavComponent extends React.Component {
+    constructor(props) {
+        super(props);
         this.state = {
-            error: null,
-            isLoaded: false,
-            items: []
-        }
+            active: 'asset'
+        };
+        this.prefix = props.prefix || "nav"
+        this.changeComponent = this.changeComponent.bind(this)
     }
 
+    changeComponent = (active) => {
+        this.setState({active: active})
+        console.log(this.state.active)
+    }
+    render() {
+        return (
+            <nav className={this.prefix}>
+                <MyContext.Provider value={this.state.active}>
+                {
+                    [
+                        <div key="forum" className="link">
+                            <span className="link-a" onClick={this.changeComponent.bind(this, 'forum')}>Forum</span>
+                        </div>,
+                        <div key="asset" className="link">
+                            <span className="link-a" onClick={this.changeComponent.bind(this, 'asset')}>Asset</span>
+                        </div>,
+                        <div key="tool" className="link">
+                            <span className="link-a" onClick={this.changeComponent.bind(this, 'tool')}>Tool</span>
+                        </div>
+                    ]
+                }
+                </MyContext.Provider>
+            </nav>
+       );
+    }
+}
+
+class IndexLinkComponent extends LinkComponent {
+    constructor(props) {
+        super(props);
+        this.prefix = 'index-link'
+        this.content = 'index'
+        this.href = '/'
+    }
+}
+
+class LoggingComponent extends React.Component {
+    constructor(props) {
+        super(props);
+        this.cancel = props.cancel || null
+        this.state = {
+            visible: false
+        };
+    }
+
+    render() {
+        const mask =
+            <div className="mm">
+                <div className="login">
+                    <div>
+                        <label htmlFor="username">Username:</label>
+                        <input type="text" id="username" name="username"/>
+                    </div>
+                    <div>
+                        <label htmlFor="password">Password (5 characters minimum(forget about it)):</label><input
+                        id="password" type="password" name="password"/>
+                    </div>
+                    <input id="log_in_submit" type="submit" value="Sign in"/>
+                    <button className="cancel" onClick={this.cancel}>Cancel</button>
+                </div>
+            </div>
+        return ReactDOM.createPortal(mask, document.getElementById('root'))
+    }
+}
+
+class HeaderUserComponent extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            is_log: false,
+            success: null,
+            logging: false,
+            user_info: {}
+        };
+        this.prefix = props.prefix || "header-user"
+        this.logging = this.logging.bind(this)
+        this.cancel_logging = this.cancel_logging.bind(this)
+    }
     componentDidMount() {
+        const primary_id = cookie.load("primary_id")
+        const user = cookie.load("user")
+        if (primary_id && user){
+            this.setState({
+                is_log: true,
+                success: true,
+                user_info: {
+                    primary_id: primary_id,
+                    user: user
+                }
+            })
+        }
         fetch("http://192.168.77.120:8888/books", {method: 'GET',
             headers: {'Content-Type': 'application/json'}})
             .then(res => res.json())
@@ -104,29 +172,52 @@ class TableComponent extends React.Component {
                 }
             )
     }
+    logging(){
+        this.setState({logging: true})
+    }
+    cancel_logging(){
+        this.setState({logging: false})
+    }
 
     render() {
-        const { error, isLoaded, items } = this.state;
-        if (error) {
-            return <div>ERROR MES</div>
-        } else if (!isLoaded) {
-            return <div>Loading...</div>
-        } else {
-            console.log(items)
+        if (this.state.is_log && this.state.success){
             return (
-                items.map(item => (
-                <tr>
-                    <span>
-                        item
-                    </span>
-                </tr>
-            )))
+                <div className={this.prefix + "-log-in"}>
+                    <p>{this.state.user_info.user}</p>
+                </div>
+            )
+        } else {
+            return (
+                <div className={this.prefix + "-log"}>
+                    <button onClick={this.logging}>log in</button>
+                    {this.state.logging ? <LoggingComponent cancel={this.cancel_logging}/>: null}
+                </div>
+            )
         }
+    }
+}
+
+export class HeaderComponent extends Component {
+    constructor(props) {
+        // ES6规定必须调用 super
+        super(props);
+        this.prefix = props.prefix || 'header'
+    }
+
+    render() {
         return (
-           <table className={this.PREFIX}>
-               {this.content}
-           </table>
-       );
+            <header className={this.prefix}>
+                <div className={this.prefix+'-index'}>
+                    <IndexLinkComponent/>
+                </div>
+                <div className={this.prefix+'-nav'}>
+                    <NavComponent/>
+                </div>
+                <div className={this.prefix+'-user'}>
+                    <HeaderUserComponent/>
+                </div>
+            </header>
+        )
     }
 }
 
@@ -137,12 +228,12 @@ export class CSSTableItemComponent extends Component {
      * **/
     constructor(props) {
         super(props);
-        this.PREFIX = 'css-table-item'
+        this.prefix = 'css-table-item'
         this.key = ''
         this.content = null
     }
     render() {
-        return <div className={this.key? this.PREFIX+ "-" +this.key: this.PREFIX}>
+        return <div className={this.key? this.prefix+ "-" +this.key: this.prefix}>
             {this.content}
         </div>
     }
@@ -151,14 +242,13 @@ export class CSSTableItemComponent extends Component {
 export class CSSTableComponent extends Component {
     constructor(props) {
         super(props);
-        this.PREFIX = 'css-table'
+        this.prefix = 'css-table'
         this.tableArray = props.tableArray
     }
     static defaultProps = {}
     render() {
-        console.log(this.tableArray);
-        return <div className={this.PREFIX}>
-            {this.tableArray? this.tableArray: null}
+        return <div className={this.prefix}>
+            {this.tableArray? this.tableArray : null}
         </div>
     }
 }
@@ -190,18 +280,31 @@ export class CSSTableRightSideComponent extends CSSTableItemComponent {
 export class SectionComponent extends Component {
     constructor(props) {
         super(props);
-        this.PREFIX = 'section'
+        this.prefix = 'section'
     }
-    static defaultProps = {}
+    static contextType = MyContext;
+
     render() {
-        return <section className={this.PREFIX}>
+        return <section className={this.prefix}>
             <CSSTableComponent tableArray={
                 [
-                    <CSSTableLeftSideComponent/>,
-                    <CSSTableMainComponent content={
-                        <TableComponent/>
+                    <CSSTableLeftSideComponent key={'left'}/>,
+                    <CSSTableMainComponent key={'main'} content={
+                        <MyContext.Consumer>
+                            {
+                                value => {
+                                    if (value === 'asset') return <TableComponent/>
+                                    else if (value === 'forum') return <TitleTableComponent/>
+                                    else if (value === 'tool') return <p>tool</p>
+                                    else {
+                                        return null
+                                    }
+                                }
+                            }
+                        </MyContext.Consumer>
                     }/>,
-                    <CSSTableRightSideComponent/>]
+                    <CSSTableRightSideComponent key={'right'}/>
+                ]
             } />
         </section>
     }
@@ -210,18 +313,15 @@ export class SectionComponent extends Component {
 export class FooterComponent extends Component {
     constructor(props) {
         super(props);
-        this.PREFIX = props.PREFIX||"footer"
+        this.prefix = props.prefix||"footer"
         this.content = props.content||"footer"
     }
 
     render() {
         return (
-            <footer className={this.PREFIX}>
+            <footer className={this.prefix}>
                 {this.content}
             </footer>
         );
     }
 }
-
-
-

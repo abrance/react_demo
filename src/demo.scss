@@ -1,7 +1,73 @@
+._link {
+    text-decoration: none;
+    line-height: 30px;
+    display: block;
+}
+
+.header {
+    background-color: #161b22;
+    width: 100%;
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    justify-content:space-evenly;
+    align-items: center;
+
+    span {
+        line-height: 50px;
+        text-decoration: none;
+        font-family: Arial, sans-serif;
+        font-weight: bolder;
+        color: #eeeeee;
+        word-break: break-word;
+    }
+    span:hover{
+        text-decoration: underline grey;
+        color: grey;
+    }
+
+    .header-index {
+        padding: 0 200px;
+
+        .index-link {
+            height: 50px;
+            padding: 0 20px;
+        }
+    }
+    .header-nav {
+        padding: 0 100px;
+
+        .nav {
+            height: 50px;
+            display: flex;
+            padding: 0 20px;
+
+            .link {
+                padding: 0 20px;
+            }
+        }
+    }
+    .header-user {
+        padding: 0 75px;
+
+        .header-user-log {
+            height: 50px;
+            width: 100px;
+
+            button {
+                height: 30px;
+                width: 50px;
+                margin: 10px 25px;
+            }
+        }
+    }
+
+}
+
 
 
 .section {
-    background-color: #fde0e1;
+    background-color: #0d1117;
     padding: 0 0 0 0;
     height: 100px;
     width: 100%;
@@ -11,13 +77,110 @@
         display: table-row;
 
         .css-table-item-left {
-            width: 25%;
+            width: 15%;
+            border-right: thin solid grey;
+            display: table-cell;
         }
         .css-table-item-main {
-            width: 50%;
+            padding: 10px;
+            display: table-cell;
+
+            .table {
+                background-color: #0d1117;
+                border-spacing: 0;
+
+                tbody {
+                    border: 1px solid #fff;
+                }
+
+                tr {
+                    border-top: thin solid #808080;
+
+                    td {
+                        border-top: 1px solid #999;
+                        border-left: 1px solid #999;
+                        border-right: 1px solid #999;
+                        margin: 10px;
+                        padding: 10px;
+
+                        div {
+                            width: 700px;
+                        }
+
+                        a {
+                            font-family: Arial, sans-serif;
+                            color: #c9d1d9;
+                            text-decoration: none;
+                            word-break: break-word;
+                        }
+                        a:hover {
+                            text-decoration: underline black;
+                            color: #58A6FF;
+                        }
+                        small {
+                            font-family: "Microsoft YaHei UI", Arial, sans-serif;
+                            color: grey;
+                            display: flex;
+                            justify-content:space-evenly;
+
+                            .small-group {
+                                padding-right: 10px;
+                                font-weight: bold;
+                                color: #58A6FF;
+                            }
+                            .small-time {
+                                padding-left: 20px;
+                                padding-right: 20px;
+                                color: #cccccc;
+                            }
+                        }
+
+                    }
+                }
+                tr:hover {
+                    background-color: #010101;
+                }
+            }
         }
         .css-table-item-right {
-            width: 25%;
+            border-left: thin solid grey;
+            width: 33%;
+            background-color: #0d1117;
+            display: table-cell;
         }
     }
 }
+
+
+
+.mm{
+    display: block;
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0,0,0,.6);
+}
+.mm .login{
+    width: 400px;
+    height: 300px;
+    padding: 20px;
+    background: #fff;
+    position: fixed;
+    left: 50%;
+    margin-left: -200px;
+    top: 200px;
+}
+
+.mm .login label {
+    display: block;
+    font: .9rem 'Fira Sans', sans-serif;
+}
+
+.mm .login input[type='submit'],
+.mm .login label {
+    margin-top: 1rem;
+}
+
