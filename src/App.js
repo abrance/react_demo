@@ -1,5 +1,3 @@
-import './App.css';
-
 import React from "react";
 import {FooterComponent, HeaderComponent, SectionComponent} from "./cpts";
 

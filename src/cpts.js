@@ -1,11 +1,9 @@
 import React, {Component} from "react";
 import ReactDOM from 'react-dom';
 import cookie from "react-cookies";
-import "./title.css"
 import "./demo.scss"
 import {TableComponent} from "./asset";
 import {TitleTableComponent} from "./title";
-import * as PropTypes from "prop-types";
 
 
 let MyContext = React.createContext('asset')
