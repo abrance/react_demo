@@ -1,8 +1,6 @@
-// import logo from './logo.svg';
 import './App.css';
 
 import React from "react";
-// import * as assert from "assert";
 import {FooterComponent, HeaderComponent, SectionComponent} from "./cpts";
 
 
