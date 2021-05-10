@@ -4,9 +4,7 @@ import cookie from "react-cookies";
 import "./demo.scss"
 import {TableComponent} from "./asset";
 import {TitleTableComponent} from "./title";
-
-
-let MyContext = React.createContext('asset')
+import {connect} from "react-redux";
 
 
 export class LinkComponent extends Component {
@@ -26,30 +24,6 @@ export class LinkComponent extends Component {
     }
 }
 
-class ForumLinkComponent extends LinkComponent {
-    constructor(props) {
-        super(props);
-        this.content = 'Forum'
-        this.href = '/titles'
-    }
-}
-
-class AssetLinkComponent extends LinkComponent {
-    constructor(props) {
-        super(props);
-        this.content = 'Asset'
-        this.href = '/assets'
-    }
-}
-
-class ToolLinkComponent extends LinkComponent {
-    constructor(props) {
-        super(props);
-        this.content = 'Tool'
-        this.href = '/tools'
-    }
-}
-
 class NavComponent extends React.Component {
     constructor(props) {
         super(props);
@@ -57,35 +31,40 @@ class NavComponent extends React.Component {
             active: 'asset'
         };
         this.prefix = props.prefix || "nav"
-        this.changeComponent = this.changeComponent.bind(this)
+        // this.changeComponent = this.changeComponent.bind(this)
     }
 
-    changeComponent = (active) => {
-        this.setState({active: active})
-        console.log(this.state.active)
+    changeComponent = (event)=> {
+        const app_value = event.target.dataset.v
+        this.setState({active: app_value})
+        this.props.changeApp(app_value)
     }
+
     render() {
         return (
             <nav className={this.prefix}>
-                <MyContext.Provider value={this.state.active}>
-                {
-                    [
-                        <div key="forum" className="link">
-                            <span className="link-a" onClick={this.changeComponent.bind(this, 'forum')}>Forum</span>
-                        </div>,
-                        <div key="asset" className="link">
-                            <span className="link-a" onClick={this.changeComponent.bind(this, 'asset')}>Asset</span>
-                        </div>,
-                        <div key="tool" className="link">
-                            <span className="link-a" onClick={this.changeComponent.bind(this, 'tool')}>Tool</span>
-                        </div>
-                    ]
-                }
-                </MyContext.Provider>
+                <div key="forum" className="link">
+                    <span className="link-a" data-v='forum' onClick={this.changeComponent }>Forum</span>
+                </div>
+                <div key="asset" className="link">
+                    <span className="link-a" data-v='asset' onClick={this.changeComponent}>Asset</span>
+                </div>
+                <div key="tool" className="link">
+                    <span className="link-a" data-v='tool' onClick={this.changeComponent}>Tool</span>
+                </div>
             </nav>
        );
     }
 }
+
+const dispatchAppState = (dispatch, ownProps) => {
+
+    return {
+        changeApp: (app_value) => dispatch({type: 'app', payload: app_value})
+    }
+}
+
+NavComponent = connect(null, dispatchAppState)(NavComponent)
 
 class IndexLinkComponent extends LinkComponent {
     constructor(props) {
@@ -263,9 +242,39 @@ export class CSSTableMainComponent extends CSSTableItemComponent {
     constructor(props) {
         super(props);
         this.key = 'main'
-        this.content = props.content
+        this.state = {
+            app: 'asset'
+        }
+    }
+    componentWillReceiveProps(nextProps) {
+        this.setState({app: nextProps.app});
+    }
+
+    render() {
+        return <div className={this.key? this.prefix+ "-" +this.key: this.prefix}>
+            {
+                (() => {
+                    switch (this.state.app) {
+                        case "asset": return <TableComponent />
+                        case "forum": return <TitleTableComponent/>
+                        case "tool": return <p>tool</p>
+                        default: return <p>none</p>
+                    }
+                })()
+            }
+        </div>
     }
 }
+
+
+const mapStateToProps = (state, ownProps) => {
+    return {
+        app: state.app
+    }
+}
+
+CSSTableMainComponent = connect(mapStateToProps)(CSSTableMainComponent)
+
 
 export class CSSTableRightSideComponent extends CSSTableItemComponent {
     constructor(props) {
@@ -278,33 +287,22 @@ export class CSSTableRightSideComponent extends CSSTableItemComponent {
 export class SectionComponent extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            app: props.app
+        }
         this.prefix = 'section'
     }
-    static contextType = MyContext;
 
     render() {
-        return <section className={this.prefix}>
+        return (<section className={this.prefix}>
             <CSSTableComponent tableArray={
                 [
-                    <CSSTableLeftSideComponent key={'left'}/>,
-                    <CSSTableMainComponent key={'main'} content={
-                        <MyContext.Consumer>
-                            {
-                                value => {
-                                    if (value === 'asset') return <TableComponent/>
-                                    else if (value === 'forum') return <TitleTableComponent/>
-                                    else if (value === 'tool') return <p>tool</p>
-                                    else {
-                                        return null
-                                    }
-                                }
-                            }
-                        </MyContext.Consumer>
-                    }/>,
-                    <CSSTableRightSideComponent key={'right'}/>
+                    <CSSTableLeftSideComponent key='left'/>,
+                    <CSSTableMainComponent key='main'/>,
+                    <CSSTableRightSideComponent key='right'/>
                 ]
             } />
-        </section>
+        </section>)
     }
 }
 

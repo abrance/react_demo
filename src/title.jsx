@@ -15,7 +15,7 @@ export class TitleTableComponent extends React.Component {
 
     componentDidMount() {
         fetch(`${server}/lichen/list/title`, {
-            method: 'POST',
+            method: 'GET',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({page: 1})
         })
