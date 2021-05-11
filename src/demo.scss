@@ -65,7 +65,6 @@
 }
 
 
-
 .section {
     background-color: #0d1117;
     padding: 0 0 0 0;
@@ -88,18 +87,16 @@
             .table {
                 background-color: #0d1117;
                 border-spacing: 0;
+                border-collapse: collapse;
 
                 tbody {
-                    border: 1px solid #fff;
+                    border: 1px solid #808080;
                 }
 
                 tr {
                     border-top: thin solid #808080;
 
                     td {
-                        border-top: 1px solid #999;
-                        border-left: 1px solid #999;
-                        border-right: 1px solid #999;
                         margin: 10px;
                         padding: 10px;
 
@@ -134,11 +131,71 @@
                                 color: #cccccc;
                             }
                         }
-
                     }
                 }
                 tr:hover {
                     background-color: #010101;
+                }
+                tr:last-child{
+                    border-bottom: thin solid #808080;
+                }
+            }
+            .title-table {
+                background-color: #0d1117;
+                border-spacing: 0;
+                border-collapse: collapse;
+
+                tbody {
+                    border: thin solid #808080;
+                }
+                tr {
+                    border-top: thin solid #808080;
+                    .title-table-user {
+                        margin: 10px;
+                        padding: 10px;
+                        font-family: "Microsoft YaHei UI", Arial, sans-serif;
+                        color: #c9d1d9;
+                    }
+
+                    .title-table-title {
+                        margin: 10px;
+                        padding: 10px;
+
+                        div {
+                            width: 600px;
+
+                            small {
+                                .title-table-title-small {
+                                    display: flex;
+                                    justify-content:space-evenly;
+
+                                    font-family: "Microsoft YaHei UI", Arial, sans-serif;
+                                    color: grey;
+
+                                    .title-table-title-label-span {
+                                        color: #58A6FF;
+                                    }
+                                }
+                            }
+                        }
+
+                        a {
+                            font-family: Arial, sans-serif;
+                            color: #c9d1d9;
+                            text-decoration: none;
+                            word-break: break-word;
+                        }
+                        a:hover {
+                            text-decoration: underline black;
+                            color: #58A6FF;
+                        }
+                    }
+                }
+                tr:hover {
+                    background-color: #010101;
+                }
+                tr:last-child{
+                    border-bottom: thin solid #808080;
                 }
             }
         }
@@ -150,7 +207,6 @@
         }
     }
 }
-
 
 
 .mm{

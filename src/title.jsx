@@ -1,5 +1,6 @@
 import React from "react";
 import {server} from "./config";
+import {param_fy} from "./utils";
 
 export class TitleTableComponent extends React.Component {
     constructor(props) {
@@ -14,10 +15,11 @@ export class TitleTableComponent extends React.Component {
     }
 
     componentDidMount() {
-        fetch(`${server}/lichen/list/title`, {
+        const params = {page: 1}
+        const _params = param_fy(params)
+        fetch(`${server}/lichen/list/title${_params}`, {
             method: 'GET',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({page: 1})
         })
             .then(res => res.json())
             .then(
@@ -55,8 +57,9 @@ export class TitleTableComponent extends React.Component {
                             const title_id = item['title_id']
                             const create_time = item['create_time']
                             const last_modify_time = item['last_modify_time']
+                            console.log(label_ls)
                             const label_spans = label_ls.map(item=>(
-                                <span key={item} className={this.prefix+"-title-label-span"}>{item}</span>
+                                <span key={item} className={this.prefix+"-title-label-span"}>{item[1]}</span>
                             ))
 
                             return (
