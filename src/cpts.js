@@ -5,6 +5,7 @@ import "./demo.scss"
 import {TableComponent} from "./asset";
 import {TitleTableComponent} from "./title";
 import {connect} from "react-redux";
+import {server} from "./config";
 
 
 export class LinkComponent extends Component {
@@ -57,7 +58,7 @@ class NavComponent extends React.Component {
     }
 }
 
-const dispatchAppState = (dispatch, ownProps) => {
+const dispatchAppState = (dispatch) => {
 
     return {
         changeApp: (app_value) => dispatch({type: 'app', payload: app_value})
@@ -82,6 +83,11 @@ class LoggingComponent extends React.Component {
         this.state = {
             visible: false
         };
+        this.logging = this.logging.bind(this)
+    }
+    logging(event) {
+        const v = event.parentNode.firstChild;
+        console.log(v)
     }
 
     render() {
@@ -96,7 +102,7 @@ class LoggingComponent extends React.Component {
                         <label htmlFor="password">Password (5 characters minimum(forget about it)):</label><input
                         id="password" type="password" name="password"/>
                     </div>
-                    <input id="log_in_submit" type="submit" value="Sign in"/>
+                    <button className="log_in_submit" onClick={this.logging}>Sign in</button>
                     <button className="cancel" onClick={this.cancel}>Cancel</button>
                 </div>
             </div>
@@ -130,7 +136,7 @@ class HeaderUserComponent extends React.Component {
                 }
             })
         }
-        fetch("http://192.168.77.120:8888/books", {method: 'GET',
+        fetch(`${server}/books`, {method: 'GET',
             headers: {'Content-Type': 'application/json'}})
             .then(res => res.json())
             .then(
