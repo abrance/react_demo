@@ -6,7 +6,7 @@ import {TableComponent} from "./asset";
 import {TitleTableComponent} from "./title";
 import {connect} from "react-redux";
 import {server} from "./config";
-
+import MD5 from "crypto-js/md5"
 
 export class LinkComponent extends Component {
     constructor(props) {
@@ -84,10 +84,36 @@ class LoggingComponent extends React.Component {
             visible: false
         };
         this.logging = this.logging.bind(this)
+        this.cancel = this.cancel.bind(this)
     }
     logging(event) {
-        const v = event.parentNode.firstChild;
-        console.log(v)
+        const username = document.querySelector("#username").value;
+        const pwd = document.querySelector("#password").value;
+        const bod = JSON.stringify({username: username, password: MD5(pwd).toString()})
+        console.log(bod)
+        if (username && pwd) {
+            fetch(`${server}/lichen/logging`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json;charset=utf-8;'},
+                    body: bod
+            }).then(res => res.json())
+                .then(result => {
+                    console.log('result', result)
+                })
+        }
+    }
+    // 分发 登录状态
+    cancel() {
+        this.props.changeLog({
+            is_log: false,
+            success: false,
+            logging: false,
+            user_info: {}
+        })
+    }
+    changeComponent() {
+        const log_state = {}
+        this.props.changeLog(log_state)
     }
 
     render() {
@@ -109,6 +135,16 @@ class LoggingComponent extends React.Component {
         return ReactDOM.createPortal(mask, document.getElementById('root'))
     }
 }
+
+const log_state_dispatch = (dispatch) => {
+    return {
+        changeLog: (log_state) => dispatch({
+            type: 'log', payload: log_state
+        })
+    }
+}
+
+LoggingComponent = connect(null, dispatchAppState)(LoggingComponent)
 
 class HeaderUserComponent extends React.Component {
     constructor(props) {
